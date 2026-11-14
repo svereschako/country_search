@@ -29,3 +29,15 @@ async function searchCountries(query, signal) {
 	console.log(data);
 	return data;
 }
+
+function debounce(fn, delay) {
+	if(executed){
+		clearTimeout(timer);
+		executed = false;
+	}
+	executed = true;
+	timer = setTimeout(() => {
+		fn();
+		executed = false;
+	}, delay);	
+}
