@@ -36,8 +36,7 @@ function debounce(fn, delay) {
 	if(executed){
 		clearTimeout(timer);
 		executed = false;		
-	}
-	//controller.abort();
+	}	
 	executed = true;
 	timer = setTimeout(() => {		
 		fn();
@@ -61,9 +60,9 @@ function mapCountryResponse(raw) {
 		const population = createElement({parent: card, classes: ["line"]});
 		createElement({tag: "p", text: "Population", parent: population, classes: ["feature"]});
 		createElement({tag: "p", text: el.population, parent: population, classes: ["value"]});
-		//createElement({tag: "p", text: el.languages.toString(), parent: card});
-		const langs = el.languages.map((elem) => elem.name);
-		createElement({tag: "p", text: langs.toString(), parent: card});		
+		card.onclick = function() {
+			showInfo(el);
+		};						
 	});
 }
 
@@ -80,3 +79,27 @@ input.oninput = function(e) {
 		arr.length = 0;
 	}, 2000);
 };
+
+function showInfo(data) {
+	const overlay = createElement({classes: ['fixed-overlay']});
+	const modal = createElement({parent: overlay, classes: ["modal-window"]});
+	const area = createElement({parent: modal, classes: ["line"]});
+	createElement({tag: "p", text: "Area", parent: area, classes: ["feature"]});
+	createElement({text: data.area, parent: area, classes: ["value"]});
+	const borders = createElement({parent: modal, classes: ["line"]});
+	createElement({tag: "p", text: "Borders", parent: borders, classes: ["feature"]});
+	createElement({text: data.borders.toString(), parent: borders, classes: ["value"]});
+	const langs = data.languages.map((elem) => elem.name);
+	const languages = createElement({parent: modal, classes: ["line"]});
+	createElement({tag: "p", text: "Languages", parent: languages, classes: ["feature"]});
+	createElement({text: langs.toString(), parent: languages, classes: ["value"]});
+	const currs = data.currencies.map((elem) => elem.code);
+	const currencies = createElement({parent: modal, classes: ["line"]});
+	createElement({tag: "p", text: "Currencies", parent: currencies, classes: ["feature"]});
+	createElement({text: currs.toString(), parent: currencies, classes: ["value"]});
+	document.body.append(overlay);
+	overlay.onclick = function(e) {
+		if(e.target.classList.contains("fixed-overlay"))
+			e.currentTarget.remove();
+	};
+}
