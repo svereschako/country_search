@@ -63,6 +63,20 @@ function mapCountryResponse(raw) {
 		createElement({tag: "p", text: el.population, parent: population, classes: ["value"]});
 		//createElement({tag: "p", text: el.languages.toString(), parent: card});
 		const langs = el.languages.map((elem) => elem.name);
-		createElement({text: langs.toString(), parent: card});		
+		createElement({tag: "p", text: langs.toString(), parent: card});		
 	});
 }
+
+input.oninput = function(e) {
+	if(!e.target.value)
+		container.textContent = "";	
+	arr.push(e.target.value);
+	debounce(async () => {		
+		console.log(arr);
+		if(!arr[arr.length-1])
+			return;
+		const data = await searchCountries(arr[arr.length-1], sgnl);		
+		mapCountryResponse(data);
+		arr.length = 0;
+	}, 2000);
+};
