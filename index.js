@@ -1,7 +1,9 @@
 const input = createElement({tag: "input", parent: document.body, classes: ["query"]});
+const container = createElement({parent: document.body, classes: ["container"]});
 var controller = new AbortController();
 var sgnl = controller.signal;
 let executed = false;
+const arr = [];
 
 function createElement(options) {
  // Default values
@@ -33,11 +35,34 @@ async function searchCountries(query, signal) {
 function debounce(fn, delay) {
 	if(executed){
 		clearTimeout(timer);
-		executed = false;
+		executed = false;		
 	}
+	//controller.abort();
 	executed = true;
-	timer = setTimeout(() => {
+	timer = setTimeout(() => {		
 		fn();
 		executed = false;
 	}, delay);	
+}
+
+function mapCountryResponse(raw) {
+	container.textContent = "";
+	raw.forEach((el) => {
+		const card = createElement({parent: container, classes: ["card"]});
+		const wrapper = createElement({parent: card, classes: ["wrapper"]});
+		createElement({parent: wrapper, classes: ["flag"]}).style.backgroundImage = `url(${el.flags.png})`;
+		createElement({text: el.name, parent: wrapper, classes: ["name"]});		
+		const capital = createElement({parent: card, classes: ["line"]});
+		createElement({tag: "p", text: "Capital", parent: capital, classes: ["feature"]});
+		createElement({tag: "p", text: el.capital, parent: capital, classes: ["value"]});
+		const region = createElement({parent: card, classes: ["line"]});
+		createElement({tag: "p", text: "Region", parent: region, classes: ["feature"]});		
+		createElement({tag: "p", text: el.region, parent: region, classes: ["value"]});
+		const population = createElement({parent: card, classes: ["line"]});
+		createElement({tag: "p", text: "Population", parent: population, classes: ["feature"]});
+		createElement({tag: "p", text: el.population, parent: population, classes: ["value"]});
+		//createElement({tag: "p", text: el.languages.toString(), parent: card});
+		const langs = el.languages.map((elem) => elem.name);
+		createElement({text: langs.toString(), parent: card});		
+	});
 }
