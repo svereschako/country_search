@@ -27,7 +27,9 @@ function createElement(options) {
 }
 
 async function searchCountries(query, signal) {
-	const res = await fetch(`https://countries.dev/name/${query}`, {signal});	
+	const res = await fetch(`https://countries.dev/name/${query}`, {signal});
+	if(res.status == 404)
+		return "No matches were found";
 	const data = await res.json();
 	console.log(data);
 	return data;
@@ -46,7 +48,11 @@ function debounce(fn, delay) {
 }
 
 function mapCountryResponse(raw) {
-	container.textContent = "";	
+	container.textContent = "";
+	if(typeof raw == "string"){
+		createElement({tag: "h3", text: raw, parent: container, classes: ["heading"]});
+		return;
+	}
 	raw.forEach((el) => {
 		const card = createElement({parent: container, classes: ["card"]});
 		const wrapper = createElement({parent: card, classes: ["wrapper"]});
