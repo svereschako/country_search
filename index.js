@@ -4,6 +4,7 @@ var controller = new AbortController();
 var sgnl = controller.signal;
 let executed = false;
 const arr = [];
+let ring;
 
 function createElement(options) {
  // Default values
@@ -26,7 +27,7 @@ function createElement(options) {
 }
 
 async function searchCountries(query, signal) {
-	const res = await fetch(`https://countries.dev/name/${query}`, {signal});
+	const res = await fetch(`https://countries.dev/name/${query}`, {signal});	
 	const data = await res.json();
 	console.log(data);
 	return data;
@@ -45,7 +46,7 @@ function debounce(fn, delay) {
 }
 
 function mapCountryResponse(raw) {
-	container.textContent = "";
+	container.textContent = "";	
 	raw.forEach((el) => {
 		const card = createElement({parent: container, classes: ["card"]});
 		const wrapper = createElement({parent: card, classes: ["wrapper"]});
@@ -66,17 +67,21 @@ function mapCountryResponse(raw) {
 	});
 }
 
-input.oninput = function(e) {
-	if(!e.target.value)
-		container.textContent = "";	
+input.oninput = function(e) {	
+	if(!e.target.value){
+		container.textContent = "";
+		ring = null;
+	}
+	if(!ring && e.data)
+		ring = createElement({parent: container, classes: ["lds-dual-ring"]});	
 	arr.push(e.target.value);
 	debounce(async () => {		
 		console.log(arr);
 		if(!arr[arr.length-1])
 			return;
-		const data = await searchCountries(arr[arr.length-1], sgnl);		
+		const data = await searchCountries(arr[arr.length-1], sgnl);			
 		mapCountryResponse(data);
-		arr.length = 0;
+		arr.length = 0;		
 	}, 2000);
 };
 
