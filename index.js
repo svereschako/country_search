@@ -98,8 +98,9 @@ function showInfo(data) {
 	createElement({tag: "p", text: "Area", parent: area, classes: ["feature"]});
 	createElement({text: data.area, parent: area, classes: ["value"]});
 	const borders = createElement({parent: modal, classes: ["line"]});
+	const bordval = data.borders ? data.borders.toString() : "No borders";
 	createElement({tag: "p", text: "Borders", parent: borders, classes: ["feature"]});
-	createElement({text: data.borders.toString(), parent: borders, classes: ["value"]});
+	createElement({text: bordval, parent: borders, classes: ["value"]});
 	const langs = data.languages.map((elem) => elem.name);
 	const languages = createElement({parent: modal, classes: ["line"]});
 	createElement({tag: "p", text: "Languages", parent: languages, classes: ["feature"]});
