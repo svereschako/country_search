@@ -1,8 +1,8 @@
 const input = createElement({tag: "input", parent: document.body, classes: ["query"]});
 const container = createElement({parent: document.body, classes: ["container"]});
 var controller = new AbortController();
-var sgnl = controller.signal;
 let executed = false;
+let timer;
 const arr = [];
 let ring;
 
@@ -26,16 +26,16 @@ function createElement(options) {
  return element; // Returning the created element for further manipulations
 }
 
-async function searchCountries(query, signal) {
+async function searchCountries(query, signal) {		
 	const res = await fetch(`https://countries.dev/name/${query}`, {signal});
 	if(res.status == 404)
 		return "No matches were found";
 	const data = await res.json();
 	console.log(data);
-	return data;
+	return data;	
 }
 
-function debounce(fn, delay) {
+function debounce(fn, delay) {	
 	if(executed){
 		clearTimeout(timer);
 		executed = false;		
@@ -80,14 +80,15 @@ input.oninput = function(e) {
 	}
 	if(!ring && e.data)
 		ring = createElement({parent: container, classes: ["lds-dual-ring"]});	
-	arr.push(e.target.value);
+	if(controller)
+		controller.abort();
+	controller = new AbortController();
+	const sgnl = controller.signal;
 	debounce(async () => {		
-		console.log(arr);
-		if(!arr[arr.length-1])
-			return;
-		const data = await searchCountries(arr[arr.length-1], sgnl);			
-		mapCountryResponse(data);
-		arr.length = 0;		
+		if(!e.target.value)
+			return;		
+		const data = await searchCountries(e.target.value, sgnl);			
+		mapCountryResponse(data);			
 	}, 2000);
 };
 
