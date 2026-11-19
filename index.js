@@ -26,13 +26,26 @@ function createElement(options) {
  return element; // Returning the created element for further manipulations
 }
 
-async function searchCountries(query, signal) {		
+class HttpError extends Error {
+	constructor(status) {
+		super();
+		this.name = "HttpError";
+		this.status = status;
+	}
+}
+
+async function searchCountries(query, signal) {	
+	try {
 	const res = await fetch(`https://countries.dev/name/${query}`, {signal});
 	if(res.status == 404)
 		return "No matches were found";
 	const data = await res.json();
 	console.log(data);
-	return data;	
+	return data;
+	} catch(e) {
+		if(e.name !== "AbortError")
+			throw new HttpError();
+	}
 }
 
 function debounce(fn, delay) {	
